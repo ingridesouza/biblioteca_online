@@ -182,6 +182,33 @@ def adicionar_membro():
     
     return render_template('adicionar_membro.html')
 
+
+@app.route('/membros/deletar/<int:membro_id>', methods=['POST'])
+def deletar_membro(membro_id):
+    membro = Membro.query.get_or_404(membro_id)
+    
+    if Emprestimo.query.filter_by(membro_id=membro_id, data_devolucao=None).count() > 0:
+        flash('Não é possível deletar membro com empréstimos ativos!', 'danger')
+        return redirect(url_for('listar_membros'))
+    
+    try:
+        novo_historico = Historico(
+            acao='exclusao_membro',
+            membro_id=membro_id,
+            detalhes=f'Membro "{membro.nome}" (ID: {membro_id}) deletado do sistema'
+        )
+        
+        db.session.add(novo_historico)
+        db.session.delete(membro)
+        db.session.commit()
+        
+        flash(f'Membro "{membro.nome}" deletado com sucesso!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Erro ao deletar membro: {str(e)}', 'danger')
+    
+    return redirect(url_for('listar_membros'))
+
 @app.route('/emprestimos')
 def listar_emprestimos():
     emprestimos = Emprestimo.query.filter_by(data_devolucao=None).all()

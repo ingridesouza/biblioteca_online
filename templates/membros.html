@@ -26,6 +26,11 @@
             <td>{{ membro.livros_emprestados|length }}</td>
             <td>
                 <a href="#" class="btn btn-sm btn-info">Detalhes</a>
+                <form action="{{ url_for('deletar_membro', membro_id=membro.id) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja deletar este membro?')">
+                        <i class="bi bi-trash"></i> Deletar
+                    </button>
+                </form>
             </td>
         </tr>
         {% else %}
