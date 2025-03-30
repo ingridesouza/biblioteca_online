@@ -20,7 +20,10 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Usando postgresql do Render
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL').replace("postgresql://", "postgresql+psycopg2://")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL').replace(
+    "postgresql://", 
+    "postgresql+psycopg2://"
+) + "?sslmode=require"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config.update(
