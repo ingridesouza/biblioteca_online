@@ -23,6 +23,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <form id="deleteForm" method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-danger">Confirmar</button>
                 </form>
             </div>
@@ -68,12 +69,12 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var deleteButtons = document.querySelectorAll('.delete-btn');
+    var deleteForm = document.getElementById('deleteForm');
     
     deleteButtons.forEach(function(button) {
         button.addEventListener('click', function() {
             var url = this.getAttribute('data-url');
-            var form = document.getElementById('deleteForm');
-            form.action = url;
+            deleteForm.action = url;
         });
     });
 });
