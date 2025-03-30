@@ -16,3 +16,4 @@ gunicorn==20.1.0
 psycopg2-binary==2.9.9
 SQLAlchemy==1.4.46
 Flask-SQLAlchemy==3.0.5
+flask_login 
