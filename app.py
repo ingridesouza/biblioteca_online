@@ -192,9 +192,10 @@ def deletar_membro(membro_id):
         return redirect(url_for('listar_membros'))
     
     try:
+        Historico.query.filter_by(membro_id=membro_id).update({'membro_id': None})
+        
         novo_historico = Historico(
             acao='exclusao_membro',
-            membro_id=membro_id,
             detalhes=f'Membro "{membro.nome}" (ID: {membro_id}) deletado do sistema'
         )
         
