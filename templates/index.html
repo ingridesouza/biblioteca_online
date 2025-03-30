@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Início{% endblock %}
+
+{% block content %}
+<section class="hero-section mb-5">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">Sistema de Gestão Bibliotecária</h1>
+        <p class="lead">Gerencie seu acervo de forma simples e eficiente</p>
+    </div>
+</section>
+
+<div class="container">
+    <div class="row g-4">
+        <!-- Card Livros -->
+        <div class="col-md-4">
+            <div class="card h-100 text-center p-4">
+                <div class="feature-icon">
+                    <i class="bi bi-book"></i>
+                </div>
+                <h3>Catálogo de Livros</h3>
+                <p class="text-muted">Gerencie todo o acervo da biblioteca com informações detalhadas.</p>
+                <a href="{{ url_for('listar_livros') }}" class="btn btn-primary mt-auto">
+                    Acessar <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Card Membros -->
+        <div class="col-md-4">
+            <div class="card h-100 text-center p-4">
+                <div class="feature-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h3>Registro de Membros</h3>
+                <p class="text-muted">Controle os membros cadastrados e seus empréstimos ativos.</p>
+                <a href="{{ url_for('listar_membros') }}" class="btn btn-primary mt-auto">
+                    Acessar <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Card Empréstimos -->
+        <div class="col-md-4">
+            <div class="card h-100 text-center p-4">
+                <div class="feature-icon">
+                    <i class="bi bi-arrow-left-right"></i>
+                </div>
+                <h3>Controle de Empréstimos</h3>
+                <p class="text-muted">Gerencie os empréstimos, renovações e devoluções.</p>
+                <a href="{{ url_for('listar_emprestimos') }}" class="btn btn-primary mt-auto">
+                    Acessar <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção de Estatísticas -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4"><i class="bi bi-graph-up"></i> Estatísticas Rápidas</h4>
+                    <div class="row text-center">
+                        <div class="col-md-4 border-end">
+                            <h2 class="text-primary">{{ total_livros }}</h2>
+                            <p class="text-muted">Livros Cadastrados</p>
+                        </div>
+                        <div class="col-md-4 border-end">
+                            <h2 class="text-primary">{{ total_membros }}</h2>
+                            <p class="text-muted">Membros Ativos</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h2 class="text-primary">{{ total_emprestimos }}</h2>
+                            <p class="text-muted">Empréstimos Ativos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Histórico de Ações{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-clock-history"></i> Histórico de Ações</h2>
+        <form class="d-flex" method="GET" action="{{ url_for('ver_historico') }}">
+            <input class="form-control me-2" type="search" name="query" placeholder="Pesquisar..." 
+                   value="{{ request.args.get('query', '') }}">
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Ação</th>
+                            <th>Membro</th>
+                            <th>Livro</th>
+                            <th>Detalhes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registro in historico %}
+                        <tr>
+                            <td>{{ registro.data_hora.strftime('%d/%m/%Y %H:%M') }}</td>
+                            <td>
+                                {% if registro.acao == 'emprestimo' %}
+                                    <span class="badge bg-success"><i class="bi bi-arrow-up-circle"></i> Empréstimo</span>
+                                {% elif registro.acao == 'devolucao' %}
+                                    <span class="badge bg-primary"><i class="bi bi-arrow-down-circle"></i> Devolução</span>
+                                {% elif registro.acao == 'renovacao' %}
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-arrow-repeat"></i> Renovação</span>
+                                {% elif registro.acao == 'atraso' %}
+                                    <span class="badge bg-danger"><i class="bi bi-exclamation-triangle"></i> Atraso</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ registro.acao }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ registro.membro.nome }}</td>
+                            <td>{{ registro.livro.titulo }}</td>
+                            <td>{{ registro.detalhes }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">Nenhum registro encontrado</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginação -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if pagination.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('ver_historico', page=pagination.prev_num, query=request.args.get('query', '')) }}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for page_num in pagination.iter_pages() %}
+                        {% if page_num %}
+                            <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('ver_historico', page=page_num, query=request.args.get('query', '')) }}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if pagination.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('ver_historico', page=pagination.next_num, query=request.args.get('query', '')) }}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}

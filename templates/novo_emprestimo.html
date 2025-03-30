@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Empréstimo{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-arrow-up-circle"></i> Registrar Novo Empréstimo</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('novo_emprestimo') }}">
+                        <div class="mb-3">
+                            <label for="membro_id" class="form-label">Membro</label>
+                            <select class="form-select" id="membro_id" name="membro_id" required>
+                                <option value="" selected disabled>Selecione um membro</option>
+                                {% for membro in membros %}
+                                <option value="{{ membro.id }}">{{ membro.nome }} (ID: {{ membro.id }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="livro_id" class="form-label">Livro Disponível</label>
+                            <select class="form-select" id="livro_id" name="livro_id" required>
+                                <option value="" selected disabled>Selecione um livro</option>
+                                {% for livro in livros %}
+                                <option value="{{ livro.id }}">{{ livro.titulo }} - {{ livro.autor }} (ID: {{ livro.id }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="data_devolucao_prevista" class="form-label">Data Prevista para Devolução</label>
+                            <input type="date" class="form-control" id="data_devolucao_prevista" name="data_devolucao_prevista" 
+                                   min="{{ date.today() }}" 
+                                   value="{{ (date.today() + timedelta(days=14)).isoformat() }}">
+                            <div class="form-text">Prazo padrão: 14 dias</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('listar_emprestimos') }}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Registrar Empréstimo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

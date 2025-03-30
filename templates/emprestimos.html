@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Empréstimos Ativos</h2>
+
+<div class="mb-4">
+    <a href="{{ url_for('novo_emprestimo') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Novo Empréstimo
+    </a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Livro</th>
+            <th>Membro</th>
+            <th>Data Empréstimo</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for emprestimo in emprestimos %}
+        <tr>
+            <td>{{ emprestimo.id }}</td>
+            <td>{{ emprestimo.livro.titulo }}</td>
+            <td>{{ emprestimo.membro.nome }}</td>
+            <td>{{ emprestimo.data_emprestimo.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>
+                <form action="{{ url_for('devolver_livro', emprestimo_id=emprestimo.id) }}" method="POST">
+                    <button type="submit" class="btn btn-sm btn-success">Registrar Devolução</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5">Nenhum empréstimo ativo no momento.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

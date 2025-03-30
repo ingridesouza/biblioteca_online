@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Registro de Membros</h2>
+
+<div class="mb-4">
+    <a href="{{ url_for('adicionar_membro') }}" class="btn btn-primary">
+        <i class="bi bi-person-plus"></i> Adicionar Membro
+    </a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Livros Emprestados</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for membro in membros %}
+        <tr>
+            <td>{{ membro.id }}</td>
+            <td>{{ membro.nome }}</td>
+            <td>{{ membro.livros_emprestados|length }}</td>
+            <td>
+                <a href="#" class="btn btn-sm btn-info">Detalhes</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4">Nenhum membro registrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

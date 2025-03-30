@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Livro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-bookmark-plus"></i> Adicionar Novo Livro</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('adicionar_livro') }}">
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título do Livro</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                            <div class="form-text">Informe o título completo do livro</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="autor" class="form-label">Autor</label>
+                            <input type="text" class="form-control" id="autor" name="autor" required>
+                            <div class="form-text">Nome completo do autor</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('listar_livros') }}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Cadastrar Livro
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
