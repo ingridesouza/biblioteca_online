@@ -11,11 +11,16 @@ from models import Historico
 import smtplib
 from email.mime.text import MIMEText
 from itsdangerous.url_safe import URLSafeTimedSerializer as Serializer
+from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
+# app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Usando postgresql do Render
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL').replace("postgresql://", "postgresql+psycopg2://")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config.update(
@@ -33,6 +38,8 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+
+
 
 def verificar_atrasos():
     with app.app_context():
@@ -80,6 +87,7 @@ def verificar_atrasos():
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=verificar_atrasos, trigger='interval', days=1)
 scheduler.start()
+
 
 @app.route('/')
 def index():
