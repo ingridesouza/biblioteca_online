@@ -1,106 +1,58 @@
-from flask_sqlalchemy import SQLAlchemy
+from app import db
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
-from flask import current_app
-import smtplib
-from email.mime.text import MIMEText
+from flask_login import UserMixin
 
-db = SQLAlchemy()
+# Tabela de associação para empréstimos (modelo explícito para PostgreSQL)
+class Emprestimo(db.Model):
+    __tablename__ = 'emprestimos'
+    
+    id = db.Column(db.Integer, primary_key=True, server_default=db.text("nextval('emprestimos_id_seq'::regclass)"))
+    livro_id = db.Column(db.Integer, db.ForeignKey('livros.id'))
+    membro_id = db.Column(db.Integer, db.ForeignKey('membros.id'))
+    data_emprestimo = db.Column(db.DateTime, server_default=db.func.now())
+    data_devolucao_prevista = db.Column(db.DateTime)
+    data_devolucao = db.Column(db.DateTime)
+    status = db.Column(db.String(20), default='ativo')
+    renovacoes = db.Column(db.Integer, server_default=db.text("0"))
+    
+    # Relacionamentos otimizados para PostgreSQL
+    livro = db.relationship('Livro', back_populates='emprestimos')
+    membro = db.relationship('Membro', back_populates='emprestimos')
 
 class Livro(db.Model):
     __tablename__ = 'livros'
     
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, server_default=db.text("nextval('livros_id_seq'::regclass)"))
     titulo = db.Column(db.String(100), nullable=False)
     autor = db.Column(db.String(100), nullable=False)
-    status_emprestimo = db.Column(db.Boolean, default=False)
+    status_emprestimo = db.Column(db.Boolean, server_default=db.text("false"))
     
-    def __init__(self, titulo, autor, status_emprestimo=False):
-        self.titulo = titulo
-        self.autor = autor
-        self.status_emprestimo = status_emprestimo
-    
-    def __repr__(self):
-        status = 'Disponível' if not self.status_emprestimo else 'Indisponível'
-        return f"{self.titulo} (ID: {self.id}) - Autor: {self.autor}, Empréstimo: {status}"
+    # Relacionamento unidirecional (mais eficiente no PostgreSQL)
+    emprestimos = db.relationship('Emprestimo', back_populates='livro')
 
-class Membro(db.Model):
+class Membro(db.Model, UserMixin):
     __tablename__ = 'membros'
     
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, server_default=db.text("nextval('membros_id_seq'::regclass)"))
     nome = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique=True)
     telefone = db.Column(db.String(20))
-    livros_emprestados = db.relationship('Livro', secondary='emprestimos', backref=db.backref('membros', lazy='dynamic'))
+    senha_hash = db.Column(db.String(128))
     
-    def __init__(self, nome):
-        self.nome = nome
-    
-    def __repr__(self):
-        return f"{self.nome} (ID: {self.id})"
+    # Relacionamento unidirecional
+    emprestimos = db.relationship('Emprestimo', back_populates='membro')
 
 class Historico(db.Model):
     __tablename__ = 'historico'
     
-    id = db.Column(db.Integer, primary_key=True)
-    acao = db.Column(db.String(50), nullable=False) 
+    id = db.Column(db.Integer, primary_key=True, server_default=db.text("nextval('historico_id_seq'::regclass)"))
+    acao = db.Column(db.String(50), nullable=False)
     livro_id = db.Column(db.Integer, db.ForeignKey('livros.id'))
     membro_id = db.Column(db.Integer, db.ForeignKey('membros.id'))
-    data_hora = db.Column(db.DateTime, default=datetime.now)
-    detalhes = db.Column(db.String(200))
+    data_hora = db.Column(db.DateTime, server_default=db.func.now())
+    detalhes = db.Column(db.Text)
     
+    # Relacionamentos otimizados
     livro = db.relationship('Livro', backref='historicos')
     membro = db.relationship('Membro', backref='historicos')
-
-class Emprestimo(db.Model):
-    __tablename__ = 'emprestimos'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    livro_id = db.Column(db.Integer, db.ForeignKey('livros.id'))
-    membro_id = db.Column(db.Integer, db.ForeignKey('membros.id'))
-    data_emprestimo = db.Column(db.DateTime, default=datetime.now)
-    data_devolucao_prevista = db.Column(db.DateTime)
-    data_devolucao = db.Column(db.DateTime)
-    renovacoes = db.Column(db.Integer, default=0)
-    status = db.Column(db.String(20), default='ativo')
-    
-    livro = db.relationship('Livro', backref=db.backref('emprestimo_info', lazy='dynamic'))
-    membro = db.relationship('Membro', backref=db.backref('emprestimo_info', lazy='dynamic'))
-    
-    def verificar_atraso(self):
-        if self.status == 'ativo' and datetime.now() > self.data_devolucao_prevista:
-            self.status = 'atrasado'
-            db.session.commit()
-            self.enviar_lembrete()
-            return True
-        return False
-    
-    def enviar_lembrete(self):
-        if not self.membro.email:
-            return False
-            
-        try:
-            msg = MIMEText(f"""
-            Prezado(a) {self.membro.nome},
-            
-            O livro "{self.livro.titulo}" está com devolução atrasada desde {self.data_devolucao_prevista.strftime('%d/%m/%Y')}.
-            
-            Por favor, regularize sua situação o mais breve possível.
-            
-            Atenciosamente,
-            Biblioteca Digital
-            """)
-            
-            msg['Subject'] = f'[Biblioteca] Atraso na devolução do livro'
-            msg['From'] = current_app.config['MAIL_USERNAME']
-            msg['To'] = self.membro.email
-            
-            with smtplib.SMTP(current_app.config['MAIL_SERVER'], current_app.config['MAIL_PORT']) as server:
-                server.starttls()
-                server.login(current_app.config['MAIL_USERNAME'], current_app.config['MAIL_PASSWORD'])
-                server.send_message(msg)
-            
-            return True
-        except Exception as e:
-            current_app.logger.error(f'Erro ao enviar e-mail: {str(e)}')
-            return False
