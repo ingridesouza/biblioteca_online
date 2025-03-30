@@ -6,7 +6,7 @@
 
 > ⚠️ **Aviso Importante**: Este projeto está em fase inicial de desenvolvimento. Esta é apenas a primeira versão e muitas funcionalidades ainda serão implementadas.
 
-## Visão Geral 🌟
+## Visão Geral
 
 Sistema de gerenciamento de biblioteca digital com:
 - Controle de livros e membros
@@ -14,7 +14,7 @@ Sistema de gerenciamento de biblioteca digital com:
 - Histórico de atividades
 - Notificações por e-mail
 
-## Funcionalidades Atuais 🛠️ (Versão Inicial)
+## Funcionalidades Atuais
 
 ✅ **Gestão de Livros**  
 - Adicionar, listar e pesquisar livros  
@@ -33,9 +33,9 @@ Sistema de gerenciamento de biblioteca digital com:
 - Registro completo de todas as atividades  
 - Filtros e paginação  
 
-## Próximas Etapas 🚧 (Em Desenvolvimento)
+## Próximas Etapas 🚧
 
-🔨 **Planejado para as próximas versões**:
+**Planejado para as próximas versões**:
 - Autenticação de usuários
 - Relatórios e estatísticas
 - Multas por atraso
@@ -43,7 +43,7 @@ Sistema de gerenciamento de biblioteca digital com:
 - API RESTful
 - Melhorias na interface do usuário
 
-## Tecnologias Utilizadas 💻
+## Tecnologias Utilizadas
 
 - **Backend**: Python + Flask
 - **Banco de Dados**: PostgreSQL (Render)
@@ -58,3 +58,7 @@ Embora este seja um projeto individual, estou aberto a sugestões e feedbacks. S
  
 
 📅 **Última atualização**: Março 2025 (Versão 0.1)  
+
+---
+
+Feito com ❤️ por Ingride Souza Dev 
