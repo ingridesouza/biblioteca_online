@@ -15,6 +15,12 @@ class Livro(db.Model):
     autor = db.Column(db.String(100), nullable=False)
     status_emprestimo = db.Column(db.Boolean, default=False)
     
+    # Relacionamentos ajustados
+    emprestimos = db.relationship('Emprestimo', back_populates='livro', overlaps="membros_relacionados")
+    membros_relacionados = db.relationship('Membro', secondary='emprestimos', 
+                                         back_populates='livros_emprestados',
+                                         overlaps="emprestimos")
+    
     def __init__(self, titulo, autor, status_emprestimo=False):
         self.titulo = titulo
         self.autor = autor
@@ -31,7 +37,12 @@ class Membro(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100))
     telefone = db.Column(db.String(20))
-    livros_emprestados = db.relationship('Livro', secondary='emprestimos', backref=db.backref('membros', lazy='dynamic'))
+    
+    # Relacionamentos ajustados
+    emprestimos = db.relationship('Emprestimo', back_populates='membro', overlaps="livros_emprestados")
+    livros_emprestados = db.relationship('Livro', secondary='emprestimos', 
+                                       back_populates='membros_relacionados',
+                                       overlaps="emprestimos")
     
     def __init__(self, nome):
         self.nome = nome
@@ -64,8 +75,9 @@ class Emprestimo(db.Model):
     renovacoes = db.Column(db.Integer, default=0)
     status = db.Column(db.String(20), default='ativo')
     
-    livro = db.relationship('Livro', backref=db.backref('emprestimo_info', lazy='dynamic'))
-    membro = db.relationship('Membro', backref=db.backref('emprestimo_info', lazy='dynamic'))
+    # Relacionamentos ajustados
+    livro = db.relationship('Livro', back_populates='emprestimos', overlaps="membros_relacionados")
+    membro = db.relationship('Membro', back_populates='emprestimos', overlaps="livros_emprestados")
     
     def verificar_atraso(self):
         if self.status == 'ativo' and datetime.now() > self.data_devolucao_prevista:
