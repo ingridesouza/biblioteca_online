@@ -4,7 +4,8 @@
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/flask-2.0%2B-green)](https://flask.palletsprojects.com/)
 
-> ⚠️ **Aviso Importante**: Este projeto está em fase inicial de desenvolvimento. Esta é apenas a primeira versão e muitas funcionalidades ainda serão implementadas. ** O carregamento inicial da página poderá levar alguns minutos, por favor aguarde! :)**
+> ⚠️ **Aviso Importante**: Este projeto está em fase inicial de desenvolvimento. Esta é apenas a primeira versão e muitas funcionalidades ainda serão implementadas.
+> O carregamento inicial da página poderá levar alguns minutos, por favor aguarde!
 
 ## Visão Geral
 
