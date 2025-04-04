@@ -16,13 +16,8 @@ from itsdangerous.url_safe import URLSafeTimedSerializer as Serializer
 load_dotenv()
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Usando postgresql do Render
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL').replace(
-    "postgresql://", 
-    "postgresql+psycopg2://"
+    "postgresql://", "postgresql+psycopg2://"
 ) + "?sslmode=require"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.getenv('FLASK_SECRET_KEY')  # Necessário para CSRF
