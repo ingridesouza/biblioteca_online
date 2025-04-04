@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_wtf.csrf import CSRFProtect  # Adicionado para CSRF
 from models import db, Livro, Membro, Emprestimo
 import os
 from dotenv import load_dotenv
@@ -15,17 +16,14 @@ from itsdangerous.url_safe import URLSafeTimedSerializer as Serializer
 load_dotenv()
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Usando postgresql do Render
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL').replace(
-    "postgresql://", 
-    "postgresql+psycopg2://"
+    "postgresql://", "postgresql+psycopg2://"
 ) + "?sslmode=require"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = os.getenv('FLASK_SECRET_KEY')  # Necessário para CSRF
 
-app.secret_key = os.getenv('FLASK_SECRET_KEY')
+# Configuração do CSRF
+csrf = CSRFProtect(app)
 
 app.config.update(
     MAIL_SERVER=os.getenv('MAIL_SERVER'),
@@ -36,14 +34,10 @@ app.config.update(
     MAIL_DEFAULT_SENDER=os.getenv('MAIL_DEFAULT_SENDER')
 )
 
-
-
 db.init_app(app)
 
 with app.app_context():
     db.create_all()
-
-
 
 def verificar_atrasos():
     with app.app_context():
@@ -87,9 +81,6 @@ def verificar_atrasos():
                         app.logger.error(f'Erro ao enviar e-mail: {str(e)}')
                 
                 db.session.commit()
-
-
-
 
 @app.route('/')
 def index():
@@ -178,7 +169,6 @@ def adicionar_membro():
             return redirect(url_for('adicionar_membro'))
     
     return render_template('adicionar_membro.html')
-
 
 @app.route('/membros/deletar/<int:membro_id>', methods=['POST'])
 def deletar_membro(membro_id):
@@ -272,7 +262,6 @@ def renovar_emprestimo(emprestimo_id):
     
     return redirect(url_for('listar_emprestimos'))
 
-
 @app.route('/emprestimos/novo', methods=['GET', 'POST'])
 def novo_emprestimo():
     if request.method == 'POST':
@@ -360,7 +349,6 @@ def devolver_livro(emprestimo_id):
         flash('Empréstimo não encontrado.', 'danger')
     
     return redirect(url_for('listar_emprestimos'))
-
 
 atexit.register(lambda: scheduler.shutdown())
 if __name__ == '__main__':
