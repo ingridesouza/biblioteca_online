@@ -11,7 +11,6 @@ from models import Historico
 import smtplib
 from email.mime.text import MIMEText
 from itsdangerous.url_safe import URLSafeTimedSerializer as Serializer
-from apscheduler.schedulers.background import BackgroundScheduler
 
 load_dotenv()
 
@@ -89,9 +88,7 @@ def verificar_atrasos():
                 
                 db.session.commit()
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=verificar_atrasos, trigger='interval', days=1)
-scheduler.start()
+
 
 
 @app.route('/')
@@ -367,4 +364,7 @@ def devolver_livro(emprestimo_id):
 
 atexit.register(lambda: scheduler.shutdown())
 if __name__ == '__main__':
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=verificar_atrasos, trigger='interval', days=1)
+    scheduler.start()
     app.run(debug=True)
