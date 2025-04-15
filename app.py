@@ -12,6 +12,7 @@ import smtplib
 from email.mime.text import MIMEText
 from itsdangerous.url_safe import URLSafeTimedSerializer as Serializer
 
+
 load_dotenv()
 
 app = Flask(__name__)
