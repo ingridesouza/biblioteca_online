@@ -85,8 +85,6 @@ def verificar_atrasos():
                 db.session.commit()
 
 
-
-
 @app.route('/')
 def index():
     total_livros = Livro.query.count()
@@ -98,10 +96,12 @@ def index():
                          total_membros=total_membros,
                          total_emprestimos=total_emprestimos)
 
+
 @app.route('/livros')
 def listar_livros():
     livros = Livro.query.all()
     return render_template('livros.html', livros=livros)
+
 
 @app.route('/livros/adicionar', methods=['GET', 'POST'])
 def adicionar_livro():
@@ -126,6 +126,7 @@ def adicionar_livro():
     
     return render_template('adicionar_livro.html')
 
+
 @app.route('/livros/pesquisar', methods=['GET'])
 def pesquisar_livros():
     termo = request.args.get('termo', '')
@@ -141,10 +142,12 @@ def pesquisar_livros():
     
     return render_template('livros.html', livros=livros, termo_pesquisa=termo)
 
+
 @app.route('/membros')
 def listar_membros():
     membros = Membro.query.all()
     return render_template('membros.html', membros=membros)
+
 
 @app.route('/membros/adicionar', methods=['GET', 'POST'])
 def adicionar_membro():
@@ -203,10 +206,12 @@ def deletar_membro(membro_id):
     
     return redirect(url_for('listar_membros'))
 
+
 @app.route('/emprestimos')
 def listar_emprestimos():
     emprestimos = Emprestimo.query.filter_by(data_devolucao=None).all()
     return render_template('emprestimos.html', emprestimos=emprestimos)
+
 
 @app.route('/historico')
 def ver_historico():
@@ -234,6 +239,7 @@ def ver_historico():
     return render_template('historico.html', 
                         historico=pagination.items,
                         pagination=pagination)
+
 
 @app.route('/emprestimos/renovar/<int:emprestimo_id>')
 def renovar_emprestimo(emprestimo_id):
@@ -328,6 +334,7 @@ def novo_emprestimo():
         date=datetime.now().date(),
         timedelta=timedelta
     )
+
 
 @app.route('/emprestimos/devolver/<int:emprestimo_id>', methods=['POST'])
 def devolver_livro(emprestimo_id):
