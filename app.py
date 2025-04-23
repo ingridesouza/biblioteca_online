@@ -36,14 +36,10 @@ app.config.update(
     MAIL_DEFAULT_SENDER=os.getenv('MAIL_DEFAULT_SENDER')
 )
 
-
-
 db.init_app(app)
 
 with app.app_context():
     db.create_all()
-
-
 
 def verificar_atrasos():
     with app.app_context():
